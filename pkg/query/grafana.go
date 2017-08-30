@@ -17,8 +17,8 @@ func NewGrafanaDashboardsResolver(grafanaAPIEndpoint, grafanaCredentials string)
 	return &GrafanaDashboardsResolver{client: sdk.NewClient(grafanaAPIEndpoint, grafanaCredentials, sdk.DefaultHTTPClient)}
 }
 
-// GetDashboards returns a map
-func (g *GrafanaDashboardsResolver) GetDashboards() (map[string][]string, error) {
+// GetMetricUsage returns a map of metrics to arrays of dashboard names in which they are used
+func (g *GrafanaDashboardsResolver) GetMetricUsage() (map[string][]string, error) {
 	boards, err := g.client.SearchDashboards("*", false)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to resolve dashboards; %v", err)
