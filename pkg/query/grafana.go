@@ -48,12 +48,13 @@ func (g *GrafanaDashboardsResolver) GetDashboards() (map[string][]string, error)
 		for _, metric := range metricsUsed {
 			metricUsage, found := metricsUsage[metric]
 			if !found {
-				metricUsage = make(map[string]bool)
+				metricUsage = []string{}
 				metricsUsage[metric] = metricUsage
 			}
 			metricUsage = append(metricUsage, b.Title)
 		}
 	}
+	return metricsUsage, nil
 }
 
 func parseUsedMetrics(expression string) []string {
