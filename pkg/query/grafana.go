@@ -2,8 +2,12 @@ package query
 
 import (
 	"fmt"
+	"regexp"
 
 	"github.com/grafana-tools/sdk"
+	log "github.com/sirupsen/logrus"
+
+	"github.com/prometheus/prometheus/promql"
 )
 
 // GrafanaDashboardsResolver resolves dashboards
@@ -18,17 +22,20 @@ func NewGrafanaDashboardsResolver(grafanaAPIEndpoint, grafanaCredentials string)
 }
 
 // GetMetricUsage returns a map of metrics to arrays of dashboard names in which they are used
-func (g *GrafanaDashboardsResolver) GetMetricUsage() (map[string][]string, error) {
-	boards, err := g.client.SearchDashboards("*", false)
+func (g *GrafanaDashboardsResolver) GetMetricUsage() (map[string]map[string]string, error) {
+	boards, err := g.client.SearchDashboards("", false)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to resolve dashboards; %v", err)
 	}
 
-	metricsUsage := make(map[string][]string)
+	metricsUsage := make(map[string]map[string]string)
 	for _, b := range boards {
-		board, _, err := g.client.GetDashboard(b.Title)
+		board, _, err := g.client.GetDashboard(b.URI)
 		if err != nil {
-			return nil, fmt.Errorf("Failed to resolve dashboard '%s'; %v", b.Title, err)
+			return nil, fmt.Errorf("Failed to resolve dashboard '%s'; %v", b.URI, err)
+		}
+		if log.GetLevel() >= log.DebugLevel {
+			log.Debugf("Parsing dashboard '%s'...", board.Title)
 		}
 		metricsUsed := []string{}
 		// parse strings in the board looking for prometheus metrics
@@ -39,24 +46,47 @@ func (g *GrafanaDashboardsResolver) GetMetricUsage() (map[string][]string, error
 					for _, target := range *targets {
 						// This is our check for prometheus => this value is only filled in for prometheus targets
 						if len(target.Expr) > 0 {
-							metricsUsed = append(metricsUsed, parseUsedMetrics(target.Expr)...)
+							if log.GetLevel() >= log.DebugLevel {
+								log.Debugf("Dashboard '%s' has Prometheus expression '%s'; parsing used metrics...", board.Title, target.Expr)
+							}
+							metrics, err := parseUsedMetrics(target.Expr)
+							if err != nil {
+								return nil, fmt.Errorf("Failed to parse expression for dashboard '%s'; expression '%s'; %v", board.Title, target.Expr, err)
+							}
+							if log.GetLevel() >= log.DebugLevel {
+								log.Debugf("Dashboard '%s' requires metrics %#v", board.Title, metrics)
+							}
+							metricsUsed = append(metricsUsed, metrics...)
 						}
 					}
 				}
 			}
 		}
 		for _, metric := range metricsUsed {
-			metricUsage, found := metricsUsage[metric]
+			usage, found := metricsUsage[metric]
 			if !found {
-				metricUsage = []string{}
-				metricsUsage[metric] = metricUsage
+				usage = make(map[string]string)
+				metricsUsage[metric] = usage
 			}
-			metricUsage = append(metricUsage, b.Title)
+			usage[b.URI] = b.Title
 		}
 	}
 	return metricsUsage, nil
 }
 
-func parseUsedMetrics(expression string) []string {
-	return []string{}
+func parseUsedMetrics(expression string) ([]string, error) {
+
+	// replace any variable references with plain names
+	rexp := regexp.MustCompile(`\$([A-Za-z_]+)`)
+	sanitized := rexp.ReplaceAllString(expression, "$1")
+
+	expr, err := promql.ParseExpr(sanitized)
+	if err != nil {
+		return nil, err
+	}
+	v := &visitor{}
+	promql.Walk(v, expr)
+	return v.metrics, err
 }
+
+
