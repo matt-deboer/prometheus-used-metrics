@@ -10,13 +10,43 @@ The main drive for this tool is to allow creation of a whitelist of metrics to k
 Prometheus is sraping and storing so much more information than is actually needed--this allows a way to programmatically generate
 a whitelist that can be used to limit Prometheus' retained metrics to the bare minimum needed to support current usage.
 
-Example usage should be:
+Usage
+---
 
-```sh
-prometheus-used-metrics --prometheus-api-endpoint http://somewhere.com --grafana-api-endpoint http://grafana.something --grafana-credentials "Blah3asdfashdasdfnafsdfasdf"
+```
+NAME:
+   prometheus-used-metrics -
+      Queries prometheus and Grafana to produce a list of all used metrics
+
+
+USAGE:
+   prometheus-used-metrics [global options] command [command options] [arguments...]
+
+VERSION:
+   b9dcd11+local_changes
+
+COMMANDS:
+     help, h  Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --prometheus-api-endpoint value  The prometheus API endpoint to contact [$PROMETHEUS-USED-METRICS_PROMETHEUS_API_ENDPOINT]
+   --grafana-api-endpoint value     The grafana API endpoint to contact [$PROMETHEUS-USED-METRICS_GRAFANA_API_ENDPOINT]
+   --grafana-credentials value      The credentials used to authenticate to the grafana API [$PROMETHEUS-USED-METRICS_GRAFANA_CREDENTIALS]
+   --output-format value, -o value  The output format; one of 'json', 'yaml' (default: "json") [$PROMETHEUS-USED-METRICS_OUTPUT_FORMAT]
+   --trace-requests, -T             Log information about all requests [$PROMETHEUS-USED-METRICS_TRACE_REQUESTS]
+   --verbose, -V                    Log extra information about steps taken [$PROMETHEUS-USED-METRICS_VERBOSE]
+   --help, -h                       show help
+   --version, -v                    print the version
 ```
 
-Output should be:
+
+Example usage 
+
+```sh
+prometheus-used-metrics --prometheus-api-endpoint http://prometheus.example.org --grafana-api-endpoint http://grafana.example.org --grafana-credentials "reallylongapitokenhere"
+```
+
+Output looks like:
 
 ```json
 {
