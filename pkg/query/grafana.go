@@ -26,7 +26,7 @@ func (g *GrafanaDashboardsResolver) GetMetricUsage() (map[string][]string, error
 
 	metricsUsage := make(map[string][]string)
 	for _, b := range boards {
-		board, props, err := g.client.GetDashboard(b.Title)
+		board, _, err := g.client.GetDashboard(b.Title)
 		if err != nil {
 			return nil, fmt.Errorf("Failed to resolve dashboard '%s'; %v", b.Title, err)
 		}
@@ -58,5 +58,5 @@ func (g *GrafanaDashboardsResolver) GetMetricUsage() (map[string][]string, error
 }
 
 func parseUsedMetrics(expression string) []string {
-
+	return []string{}
 }

@@ -1,0 +1,6 @@
+bin/
+coverage.out
+ca-certificates.crt
+.vscode
+.history
+node_modules/

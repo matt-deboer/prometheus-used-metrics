@@ -4,7 +4,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/matt-deboer/mpp/pkg/version"
+	"github.com/matt-deboer/prometheus-used-metrics/pkg/query"
+	"github.com/matt-deboer/prometheus-used-metrics/pkg/version"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
@@ -58,6 +59,12 @@ func main() {
 
 		if log.GetLevel() >= log.DebugLevel {
 			log.Debugf("Querying for metrics usage: prometheus-api: %s, grafana-api: %s", prometheusAPI, grafanaAPI)
+		}
+
+		grafanaResolver := query.NewGrafanaDashboardsResolver(grafanaAPI, grafanaCreds)
+		_, err := grafanaResolver.GetMetricUsage()
+		if err != nil {
+			log.Fatalf("Failed to resolve metrics usage from grafana '%s'; %v", grafanaAPI, err)
 		}
 
 	}
