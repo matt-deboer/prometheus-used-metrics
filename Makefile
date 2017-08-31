@@ -23,7 +23,7 @@ release: clean
 		-a -tags netgo \
 		-a -installsuffix cgo \
     -ldflags "$(LD_FLAGS)" \
-		-o bin/$(TARGET) ./pkg/server
+		-o bin/$(TARGET) ./pkg/cmd
 
 ca-certificates.crt:
 	@-docker rm -f ${TARGET}_cacerts
