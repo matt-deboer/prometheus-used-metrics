@@ -8,9 +8,8 @@ Produces a manifest of metrics used across one or more sources (of which Grafana
 Motivation
 ---
 
-The main drive for this tool is to allow creation of a whitelist of metrics to keep for a given Prometheus installation. Often,
-Prometheus is sraping and storing so much more information than is actually needed--this allows a way to programmatically generate
-a whitelist that can be used to limit Prometheus' retained metrics to the bare minimum needed to support current usage.
+Often, Prometheus is sraping and storing so much more information than is actually needed--this tool allows you to programmatically generate
+a whitelist that can be used to limit Prometheus' retained metrics to the bare minimum needed to support your current usage.
 
 Usage
 ---
