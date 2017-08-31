@@ -1,5 +1,7 @@
 prometheus-used-metrics
 ===
+[![Build Status](https://travis-ci.org/matt-deboer/prometheus-used-metrics.svg?branch=master)](https://travis-ci.org/matt-deboer/prometheus-used-metrics)
+[![Docker Pulls](https://img.shields.io/docker/pulls/mattdeboer/prometheus-used-metrics.svg)](https://hub.docker.com/r/mattdeboer/prometheus-used-metrics/)
 
 Produces a manifest of metrics used across one or more sources (of which Grafana and Prometheus Rules are currently supported).
 
