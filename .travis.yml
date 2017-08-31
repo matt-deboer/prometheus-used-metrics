@@ -7,20 +7,21 @@ addons:
   apt:
     packages:
     - upx-ucl
-# before_install:
-#   - go get github.com/mattn/goveralls
 install:
-  - go get github.com/golang/dep/cmd/dep
-  - dep ensure
+- go get github.com/golang/dep/cmd/dep
+- dep ensure
 script:
 - make release
 - upx bin/prometheus-used-metrics
-# - $HOME/gopath/bin/goveralls -service=travis-ci
-# after_deploy:
-# - make docker VERSION=$TRAVIS_TAG
-# - docker login -u $DOCKER_USER -p $DOCKER_PASS
-# - export REPO=mattdeboer/prometheus-used-metrics
-# - docker push $REPO:$TRAVIS_TAG
-# - docker push $REPO:${TRAVIS_TAG}-alpine
-# - docker tag $REPO:$TRAVIS_TAG $REPO:latest
-# - docker push $REPO:latest
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: oZG/E7wnmYJ5bWv4xk3NyIGXK04f6Z8la+oTRyuNa08LDjHvX5M0pdD03ubvoXBoAfZccjccFe4qLG4dB1vu8eP62hl+yjj6Yr5BJ1pRwuUnS37ioMjEyn2IPZ0npJEmycQ5Y38AKf59tVOvIMRjwIz3CbO++iPbMvAGq47Uj0cleHMZH12PKLL4kazNCdqBiZjyXRL5OFVdQphOZvBt4WtAN/ZL14O6bR4r9tjNpNHIWV28LTpk2Hkl7GeBCdgTI3TWhZ27nCLJtNBLjpc37VvJIvGeJm7VyJ5KJ+ujtAE7uHFE8Qn6cBi7G5TDCZM70+IoYQTlCGTJZ2lAMeBjMYMT35rZ0x5rQ1rXTlRuPvV27PdCODr+qWw8d8js0hRoDiRVXUuLrmQLXzfEe6uBYxdU8KXBVeV/rrBbPNxQmo1k8liHL8OCcwKNaZ59zOMKz2GzC3UZ4vav0w/r6qmgKLCXtV5n1a5ucyAjOySLIeZtgfGMGAsANG6jZwkjAVlxTzut4D5sHG3NRVxp6WeHhMAyl2FyfNcJe7OvRAvGhKjC5BB8VQX71XNgwh85h7wWAvYWOj/cslXDHi4/Rm9O9Q3E0JFCz8Sgym7uo9qj87DqjjfKSTWchNnzb2ys5GvbEwKN8msy1XalxvHTqY4SKNxRRuX75ja82+s/LmDR7jM=
+  file: bin/prometheus-used-metrics
+  on:
+    repo: matt-deboer/prometheus-used-metrics
+env:
+  global:
+  - secure: ebXzLHwc6pd5+uaDIUM6AWRPCRb3gyA9HF5+MEzQsw5lE4Dqpq0C4drgbBg+PSs0L8zQu5rkwsiUMfUcVvM/lqjty2GzJvvTVXglfZ8D7sKBtaiGprvKdknZN+ch82Rc7YkCTUu0Mt+B9Cg/hlekjqGW8Z9A71wf9H6lBSA91nPQMwyX4Ke7Do9nQ2g/J6mpYslFA03oFc/lC8OH/hPrznrGZim9V7iPrFKJET2lcl8j7j/5jvNmOdn0kEuTmIBwlBpONFaRM/17txefZxY9i6h73A7EJN9uKIzMCK2uYwxAtEjiNYKKTu4Bw8w17L/rCBaQE0xUQFDK4KdVSe6muWKn5E57qU9L7VjcEomCuFenr4Q90LXMd/2emKWFnqg6Fn7bZg/MZ6xrTtWPm/UQLwZmF3D63JQMAm1qXVPeMLqq8JFB7S8Z68aWjZX/82KdDifA+jC9/AvAHaFXImFPWe18NsU6s//y72lPbJQKkdrM/uDjlP5CkFdr1YaXYChJ6KCAKNh49l+pfQG1o6Nz2M++7GR20s0z48bOODL3xpvinB8FmAQvkAocUHM+un0Y9Rmph7qg2v5T87+Urvhepi7aavkjuUloO/28aOZLPZAG17hBPCczGIfSRj8KPzDLoEcvjExRD04aO3MBFc2ZIyUvoz02x+SC8XTnGVPp68o=
+  - secure: W2mbh/Es9dEmzL5HqnrZhNEzBHI/RuJ5+7r6CgQoZR0GZeYCbUpcQqouJIsDSf4/DXXX6IdzTnjzIRQ9KXVM7bOWfcmLQvWFlvMv2hOrBUHmmQIf4ge4wqid+FX68PUPhqCTrLDJ3MdEIqUWp2RHob9L2ENQKA2nVSv7Pf3kbBz3j6XgsE9Cl3f08SQpkbhXk8kanHVc13DA6pEohjs4Y/RvXXeZ9ktzDiJTQEmmn/TrhiaAi6X/ckmf8oRKGgllMVh51ak65EXhM0/LrsOJyaxdcOImNNe/Wjj0zmoxDn9waVr+gQLqwadUjU/8Byj+qcw7EHZLF6NVTYorUhWSBeZn7czsLu082Tmih+IqykDuV9de/cd50YcDyQRX5Ksgv1sUDyoHBJQMq5hYn9wYGUN9HBrmqMGBxyZAfCMRGb+9ZN8f6diT9+9Rx1FSvb865tP9US3YAJzaoRUOaeiFOXe6Ownyar/gs9au8ZpLO2yFIK14EIo256sNH0h4/DUyviHM4kPWi6YxZRDisK58H7Ia97cf5nRXmJeiRaM6iffs1HaXq7p4lDbJbj8vv3ZgbE81D1VVJ+RyfbcoO7QElikPSBK/5FbZ+DgVCroumRKjj5YIFITtCuXUfpoZeP48OhhGJeHF0FzWwrW9ESpmS0jXaffI1pJm5dNjhKQ4FNk=
