@@ -16,23 +16,32 @@ Usage
 ```
 NAME:
    prometheus-used-metrics -
-      Queries prometheus and Grafana to produce a list of all used metrics
+      Queries prometheus and Grafana to produce a list of all used metrics;
+
+      returns {
+        "a_metric_name" : {
+          "grafana_graphs" : [ {{ an array of 'slug' values for the graphs using this metric }}],
+          "prometheus_alerts" : [ {{ an array of alert names for the alerts using this metric }}],
+          "prometheus_jobs" : [ {{ an array of job names for the jobs that provide this metric }}]
+        },
+        ...
+      }
 
 
 USAGE:
    prometheus-used-metrics [global options] command [command options] [arguments...]
 
 VERSION:
-   b9dcd11+local_changes
+   01ca8b6+local_changes
 
 COMMANDS:
      help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --prometheus-api-endpoint value  The prometheus API endpoint to contact [$PROMETHEUS-USED-METRICS_PROMETHEUS_API_ENDPOINT]
-   --grafana-api-endpoint value     The grafana API endpoint to contact [$PROMETHEUS-USED-METRICS_GRAFANA_API_ENDPOINT]
+   --prometheus-api-endpoint value  The Prometheus API endpoint to contact [$PROMETHEUS-USED-METRICS_PROMETHEUS_API_ENDPOINT]
+   --grafana-api-endpoint value     The Grafana API endpoint to contact [$PROMETHEUS-USED-METRICS_GRAFANA_API_ENDPOINT]
    --grafana-credentials value      The credentials used to authenticate to the grafana API [$PROMETHEUS-USED-METRICS_GRAFANA_CREDENTIALS]
-   --output-format value, -o value  The output format; one of 'json', 'yaml' (default: "json") [$PROMETHEUS-USED-METRICS_OUTPUT_FORMAT]
+   --output-format value, -o value  The output format; one of 'json', 'yaml', or 'whitelist'(produces a Prometheus config snippet with metric_relabel_configs, keep entries) (default: "json") [$PROMETHEUS-USED-METRICS_OUTPUT_FORMAT]
    --trace-requests, -T             Log information about all requests [$PROMETHEUS-USED-METRICS_TRACE_REQUESTS]
    --verbose, -V                    Log extra information about steps taken [$PROMETHEUS-USED-METRICS_VERBOSE]
    --help, -h                       show help
@@ -40,7 +49,7 @@ GLOBAL OPTIONS:
 ```
 
 
-Example usage 
+## Example usage 
 
 ```sh
 prometheus-used-metrics --prometheus-api-endpoint http://prometheus.example.org --grafana-api-endpoint http://grafana.example.org --grafana-credentials "reallylongapitokenhere"
@@ -53,6 +62,119 @@ Output looks like:
   "metric_name_1": {
     "grafana_graphs": ["Graph1","Graph2"],
     "prometheus_alerts": ["alert1","another_alert"],
-  }
+    "prometheus_jobs": ["job1","job2"]
+  },
+  ...
 }
 ```
+
+## Output Format Examples
+
+- `json`
+
+  ```json
+  {
+    "mesos_slave_cpus": {
+      "grafana_graphs": [
+        "db/resource-availability"
+      ],
+      "prometheus_alerts": [
+        "system_low_cpu_in_rack",
+        "system_low_cpu_in_az"
+      ],
+      "prometheus_jobs": [
+        "marathon_exporter",
+        "mesos_exporter_agents"
+      ]
+    },
+    "mesos_slave_mem": {
+      "grafana_graphs": [
+        "db/resource-availability"
+      ],
+      "prometheus_alerts": [
+        "system_low_mem_in_rack",
+        "system_low_mem_in_az"
+      ],
+      "prometheus_jobs": [
+        "mesos_exporter_agents"
+      ]
+    },
+    ...
+  }
+  ```
+
+- `yaml`
+
+  ```yaml
+  mesos_slave_cpus:
+    grafana_graphs:
+    - db/resource-availability
+    prometheus_alerts:
+    - system_low_cpu_in_rack
+    - system_low_cpu_in_az
+    prometheus_jobs:
+    - marathon_exporter
+    - mesos_exporter_agents
+  mesos_slave_mem:
+    grafana_graphs:
+    - db/resource-availability
+    prometheus_alerts:
+    - system_low_mem_in_az
+    - system_low_mem_in_rack
+    prometheus_jobs:
+    - mesos_exporter_agents
+  ```
+
+- `whitelist`
+
+  ```yaml
+  - job_name: node_exporter_agents
+    metric_relabel_configs:
+
+    - source_labels: [__name__]
+      regex: 'node_filesystem_size'
+      action: keep
+
+    - source_labels: [__name__]
+      regex: 'node_filesystem_free'
+      action: keep
+
+    - source_labels: [__name__]
+      regex: 'node_network_transmit_bytes'
+      action: keep
+
+    - source_labels: [__name__]
+      regex: 'up'
+      action: keep
+
+    - source_labels: [__name__]
+      regex: 'node_network_receive_bytes'
+      action: keep
+
+    - source_labels: [__name__]
+      regex: 'node_cpu'
+      action: keep
+
+  - job_name: node_exporter_masters
+    metric_relabel_configs:
+
+    - source_labels: [__name__]
+      regex: 'node_filesystem_size'
+      action: keep
+
+    - source_labels: [__name__]
+      regex: 'node_filesystem_free'
+      action: keep
+
+    - source_labels: [__name__]
+      regex: 'node_network_transmit_bytes'
+      action: keep
+
+    - source_labels: [__name__]
+      regex: 'up'
+      action: keep
+
+    - source_labels: [__name__]
+      regex: 'node_network_receive_bytes'
+      action: keep
+  ```
