@@ -1,12 +1,15 @@
 package query
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/prometheus/client_golang/api/prometheus"
+	"github.com/prometheus/common/model"
 	"github.com/prometheus/prometheus/promql"
 	log "github.com/sirupsen/logrus"
 	"github.com/yhat/scrape"
@@ -84,6 +87,39 @@ func (p *PrometheusMetricsResolver) GetAlertMetricUsage() (map[string]map[string
 	return metricsUsage, nil
 }
 
-func (p *PrometheusMetricsResolver) GetMetricDetails(metricName string) (map[string]string, error) {
+const nameLabel = model.LabelName("__name__")
+const jobLabel = model.LabelName("job")
 
+func (p *PrometheusMetricsResolver) ApplyMetricDetails(metrics *map[string]map[string][]string) error {
+
+	keys := make([]string, len(*metrics))
+	i := 0
+	for k := range *metrics {
+		keys[i] = k
+		i++
+	}
+	names := strings.Join(keys, "|")
+	result, err := p.queryAPI.Query(context.Background(), fmt.Sprintf(`count({__name__=~"(%s)"}) by (__name__,job)`, names), time.Now())
+	if err != nil {
+		return fmt.Errorf("Failed to retrieve jobs for metrics '%s'", keys)
+	}
+
+	switch result.Type() {
+	case model.ValVector:
+		for _, sample := range result.(model.Vector) {
+			if log.GetLevel() >= log.DebugLevel {
+				log.Debugf("Parsing Vector sample: %s...", sample.String)
+			}
+			labels := model.LabelSet(sample.Metric)
+			name := string(labels[nameLabel])
+			job := string(labels[jobLabel])
+			metric := (*metrics)[name]
+			if _, found := metric["prometheus_jobs"]; !found {
+				metric["prometheus_jobs"] = []string{}
+			}
+			metric["prometheus_jobs"] = append(metric["prometheus_jobs"], job)
+		}
+		break
+	}
+	return nil
 }
