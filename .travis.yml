@@ -21,6 +21,7 @@ deploy:
   file: bin/prometheus-used-metrics
   on:
     repo: matt-deboer/prometheus-used-metrics
+    tags: true
 env:
   global:
   - secure: ebXzLHwc6pd5+uaDIUM6AWRPCRb3gyA9HF5+MEzQsw5lE4Dqpq0C4drgbBg+PSs0L8zQu5rkwsiUMfUcVvM/lqjty2GzJvvTVXglfZ8D7sKBtaiGprvKdknZN+ch82Rc7YkCTUu0Mt+B9Cg/hlekjqGW8Z9A71wf9H6lBSA91nPQMwyX4Ke7Do9nQ2g/J6mpYslFA03oFc/lC8OH/hPrznrGZim9V7iPrFKJET2lcl8j7j/5jvNmOdn0kEuTmIBwlBpONFaRM/17txefZxY9i6h73A7EJN9uKIzMCK2uYwxAtEjiNYKKTu4Bw8w17L/rCBaQE0xUQFDK4KdVSe6muWKn5E57qU9L7VjcEomCuFenr4Q90LXMd/2emKWFnqg6Fn7bZg/MZ6xrTtWPm/UQLwZmF3D63JQMAm1qXVPeMLqq8JFB7S8Z68aWjZX/82KdDifA+jC9/AvAHaFXImFPWe18NsU6s//y72lPbJQKkdrM/uDjlP5CkFdr1YaXYChJ6KCAKNh49l+pfQG1o6Nz2M++7GR20s0z48bOODL3xpvinB8FmAQvkAocUHM+un0Y9Rmph7qg2v5T87+Urvhepi7aavkjuUloO/28aOZLPZAG17hBPCczGIfSRj8KPzDLoEcvjExRD04aO3MBFc2ZIyUvoz02x+SC8XTnGVPp68o=
