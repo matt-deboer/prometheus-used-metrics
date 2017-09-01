@@ -12,13 +12,18 @@ LD_FLAGS       ?= -s -X github.com/matt-deboer/${TARGET}/pkg/version.Name=$(TARG
 
 default: test build
 
+.PHONY: dep
+dep:
+	@ which dep >/dev/null || go get github.com/golang/dep/cmd/dep
+	dep ensure
+
 test:
 	go test -v -cover -run=$(RUN) $(TEST)
 
 build: clean
 	@go build -v -o bin/$(TARGET) -ldflags "$(LD_FLAGS)+local_changes" ./pkg/cmd
 
-release: clean
+release: clean dep
 	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build \
 		-a -tags netgo \
 		-a -installsuffix cgo \
