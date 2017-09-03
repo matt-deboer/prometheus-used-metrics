@@ -29,7 +29,7 @@
   branch = "master"
   name = "github.com/golang/protobuf"
   packages = ["proto"]
-  revision = "ab9f9a6dab164b7d1246e0e688b0ab7b94d8553e"
+  revision = "17ce1425424ab154092bbb43af630bd647f3bb0d"
 
 [[projects]]
   branch = "master"
@@ -44,10 +44,10 @@
   version = "v1.1.1"
 
 [[projects]]
-  name = "github.com/grafana-tools/sdk"
+  branch = "master"
+  name = "github.com/matt-deboer/sdk"
   packages = ["."]
-  revision = "aa7d8fca42f8635700aa78843a3aafdf97e1e3c0"
-  version = "v0.7"
+  revision = "1ca7e16d37ffa218e4962f40950c1aee3ba419c7"
 
 [[projects]]
   name = "github.com/matttproud/golang_protobuf_extensions"
@@ -137,7 +137,7 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows","windows/registry","windows/svc/eventlog"]
-  revision = "bb24a47a89eac6c1227fbcb2ae37a8b9ed323366"
+  revision = "7ddbeae9ae08c6a06a59597f0c9edbc5ff2444ce"
 
 [[projects]]
   name = "gopkg.in/alecthomas/kingpin.v2"
@@ -154,6 +154,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "2af7f52730799de5328e488149d2b911fb680c339aff8e57fe68cab102a1b038"
+  inputs-digest = "9d0bfb4098d90b7c6eb73468189c8192b6ce9b1557d3ac0eb44b695e117dac06"
   solver-name = "gps-cdcl"
   solver-version = 1

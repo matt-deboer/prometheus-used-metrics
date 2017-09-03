@@ -22,12 +22,24 @@
 
 
 [[constraint]]
-  name = "github.com/grafana-tools/sdk"
-  version = "0.7.0"
+  name = "github.com/ghodss/yaml"
+  version = "1.0.0"
 
 [[constraint]]
-  name = "github.com/matt-deboer/mpp"
-  version = "0.2.4"
+  name = "github.com/matt-deboer/sdk"
+  version = "0.7.0.2"
+
+[[constraint]]
+  name = "github.com/prometheus/client_golang"
+  version = "0.8.0"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/prometheus/common"
+
+[[constraint]]
+  name = "github.com/prometheus/prometheus"
+  version = "1.7.1"
 
 [[constraint]]
   name = "github.com/sirupsen/logrus"
@@ -36,3 +48,11 @@
 [[constraint]]
   name = "github.com/urfave/cli"
   version = "1.20.0"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/yhat/scrape"
+
+[[constraint]]
+  branch = "master"
+  name = "golang.org/x/net"
