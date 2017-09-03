@@ -7,12 +7,12 @@ addons:
   apt:
     packages:
     - upx-ucl
-# install:
-# - go get github.com/golang/dep/cmd/dep
-# - dep ensure
+before_install:
+- go get github.com/mattn/goveralls
 script:
 - make release
 - upx bin/prometheus-used-metrics
+- $HOME/gopath/bin/goveralls -service=travis-ci
 deploy:
   provider: releases
   skip_cleanup: true
