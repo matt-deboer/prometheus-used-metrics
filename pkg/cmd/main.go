@@ -148,10 +148,10 @@ func argError(c *cli.Context, msg string, args ...interface{}) {
 
 const metricRelabelTemplate = `
   - job_name: %s	
-		metric_relabel_configs:
-		- source_labels: [__name__]
-		  regex: '%s'
-		  action: keep
+    metric_relabel_configs:
+    - source_labels: [__name__]
+      regex: '%s'
+      action: keep
 `
 
 func serialize(usage map[string]map[string][]string, stdout io.Writer, format string) {
