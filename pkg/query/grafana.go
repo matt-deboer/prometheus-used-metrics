@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/grafana-tools/sdk"
+	"github.com/matt-deboer/sdk"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/prometheus/prometheus/promql"
@@ -88,5 +88,3 @@ func parseUsedMetrics(expression string) ([]string, error) {
 	promql.Walk(v, expr)
 	return v.metrics, err
 }
-
-
