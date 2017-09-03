@@ -41,11 +41,11 @@ func NewPrometheusMetricsResolver(prometheusAPIEndpoint string) (*PrometheusMetr
 func (p *PrometheusMetricsResolver) GetAlertMetricUsage() (map[string]map[string]bool, error) {
 	resp, err := http.Get(fmt.Sprintf("%s/rules", p.endpoint))
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("Failed to fetch rules from endpoint '%s'; %v", p.endpoint, err)
 	}
 	root, err := html.Parse(resp.Body)
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("Failed to parse rules html from endpoint '%s'; %v", p.endpoint, err)
 	}
 
 	metricsUsage := make(map[string]map[string]bool)
@@ -54,7 +54,7 @@ func (p *PrometheusMetricsResolver) GetAlertMetricUsage() (map[string]map[string
 		// must check for nil values
 		return n.DataAtom == atom.Pre
 	}
-	// grab all articles and print them
+
 	for _, rules := range scrape.FindAll(root, matcher) {
 		text := scrape.Text(rules)
 		rawAlerts := alertSplitter.Split(text, -1)

@@ -3,4 +3,3 @@ coverage.out
 ca-certificates.crt
 .vscode
 .history
-test/data/test-rules.html
