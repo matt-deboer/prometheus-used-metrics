@@ -52,7 +52,7 @@ func run(args []string, stdout io.Writer) {
 		},
 		cli.StringFlag{
 			Name:   "grafana-credentials",
-			Usage:  "The credentials used to authenticate to the grafana API",
+			Usage:  "The credentials used to authenticate to the grafana API--supports either a 'USERNAME:PASSWORD' basic auth string, or an API token",
 			EnvVar: envBase + "GRAFANA_CREDENTIALS",
 		},
 		cli.StringFlag{
