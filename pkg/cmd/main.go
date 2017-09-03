@@ -148,17 +148,19 @@ func argError(c *cli.Context, msg string, args ...interface{}) {
 
 const metricRelabelTemplate = `
   - job_name: %s	
-    metric_relabel_configs:
-`
-const metricKeepTemplate = `
-    - source_labels: [__name__]
-      regex: '%s'
-      action: keep
+		metric_relabel_configs:
+		- source_labels: [__name__]
+		  regex: '%s'
+		  action: keep
 `
 
 func serialize(usage map[string]map[string][]string, stdout io.Writer, format string) {
 	var data []byte
 	var err error
+	if log.GetLevel() >= log.DebugLevel {
+		log.Debugf("Serializing in '%s' format...", format)
+	}
+
 	if format == "whitelist" {
 		// Creates a prometheus config yaml snippet for each job that includes the
 		// 'metric_relabel_configs' section with a 'keep' entry for each used metric
@@ -169,16 +171,21 @@ func serialize(usage map[string]map[string][]string, stdout io.Writer, format st
 					if _, exists := metricsByJob[job]; !exists {
 						metricsByJob[job] = []string{}
 					}
+					if log.GetLevel() >= log.DebugLevel {
+						log.Debugf("Adding metric '%s' for job '%s'...", metricName, job)
+					}
 					metricsByJob[job] = append(metricsByJob[job], metricName)
 				}
 			}
 		}
 		buff := bytes.NewBufferString("")
 		for job, metrics := range metricsByJob {
-			buff.WriteString(fmt.Sprintf(metricRelabelTemplate, job))
-			for _, metric := range metrics {
-				buff.WriteString(fmt.Sprintf(metricKeepTemplate, metric))
+			metricsRegex := fmt.Sprintf("(%s)", strings.Join(metrics, "|"))
+			whitelistString := fmt.Sprintf(metricRelabelTemplate, job, metricsRegex)
+			if log.GetLevel() >= log.DebugLevel {
+				log.Debugf("Serializing whitelist string for job '%s':\n%s", job, whitelistString)
 			}
+			buff.WriteString(whitelistString)
 		}
 		data = buff.Bytes()
 	} else if format == "yaml" {
@@ -197,4 +204,5 @@ func serialize(usage map[string]map[string][]string, stdout io.Writer, format st
 	if err != nil {
 		log.Fatalf("Failed to write metrics output; %v", err)
 	}
+	w.Flush()
 }
