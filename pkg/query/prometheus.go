@@ -120,6 +120,8 @@ func (p *PrometheusMetricsResolver) ApplyMetricDetails(metrics *map[string]map[s
 			metric["prometheus_jobs"] = append(metric["prometheus_jobs"], job)
 		}
 		break
+	default:
+		return fmt.Errorf("Failed to resolve jobs for metrics '%s'", keys)
 	}
 	return nil
 }
