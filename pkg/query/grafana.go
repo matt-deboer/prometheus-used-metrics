@@ -53,15 +53,31 @@ func (g *GrafanaDashboardsResolver) GetMetricUsage() (map[string]map[string]stri
 							if err != nil {
 								return nil, fmt.Errorf("Failed to parse expression for dashboard '%s'; expression '%s'; %v", board.Title, target.Expr, err)
 							}
-							if log.GetLevel() >= log.DebugLevel {
-								log.Debugf("Dashboard '%s' requires metrics %#v", board.Title, metrics)
-							}
 							metricsUsed = append(metricsUsed, metrics...)
 						}
 					}
 				}
 			}
 		}
+
+		for _, templateVar := range board.Templating.List {
+			if templateVar.Datasource != nil {
+				if log.GetLevel() >= log.DebugLevel {
+					log.Debugf("Dashboard '%s' has template var '%s' with query '%s'; parsing used metrics...", board.Title, templateVar.Name, templateVar.Query)
+				}
+				metrics, err := parseUsedMetrics(templateVar.Query)
+				if err != nil {
+					log.Warnf("Failed to parse expression for template var '%s'; expression '%s'; %v", templateVar.Name, templateVar.Query, err)
+				} else {
+					metricsUsed = append(metricsUsed, metrics...)
+				}
+			}
+		}
+
+		if log.GetLevel() >= log.DebugLevel {
+			log.Debugf("Dashboard '%s' requires metrics %#v", board.Title, metricsUsed)
+		}
+
 		for _, metric := range metricsUsed {
 			usage, found := metricsUsage[metric]
 			if !found {
