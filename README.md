@@ -2,6 +2,9 @@ prometheus-used-metrics
 ===
 [![Build Status](https://travis-ci.org/matt-deboer/prometheus-used-metrics.svg?branch=master)](https://travis-ci.org/matt-deboer/prometheus-used-metrics)
 [![Docker Pulls](https://img.shields.io/docker/pulls/mattdeboer/prometheus-used-metrics.svg)](https://hub.docker.com/r/mattdeboer/prometheus-used-metrics/)
+[![Coverage Status](https://coveralls.io/repos/github/matt-deboer/prometheus-used-metrics/badge.svg?branch=master)](https://coveralls.io/github/matt-deboer/prometheus-used-metrics?branch=master) 
+
+
 
 Produces a manifest of metrics used across one or more sources (of which Grafana and Prometheus Rules are currently supported).
 
@@ -133,49 +136,12 @@ Output looks like:
     metric_relabel_configs:
 
     - source_labels: [__name__]
-      regex: 'node_filesystem_size'
-      action: keep
-
-    - source_labels: [__name__]
-      regex: 'node_filesystem_free'
-      action: keep
-
-    - source_labels: [__name__]
-      regex: 'node_network_transmit_bytes'
-      action: keep
-
-    - source_labels: [__name__]
-      regex: 'up'
-      action: keep
-
-    - source_labels: [__name__]
-      regex: 'node_network_receive_bytes'
-      action: keep
-
-    - source_labels: [__name__]
-      regex: 'node_cpu'
+      regex: '(node_filesystem_size|node_filesystem_free|node_network_transmit_bytes|node_network_receive_bytes|node_cpu)'
       action: keep
 
   - job_name: node_exporter_masters
     metric_relabel_configs:
 
     - source_labels: [__name__]
-      regex: 'node_filesystem_size'
-      action: keep
-
-    - source_labels: [__name__]
-      regex: 'node_filesystem_free'
-      action: keep
-
-    - source_labels: [__name__]
-      regex: 'node_network_transmit_bytes'
-      action: keep
-
-    - source_labels: [__name__]
-      regex: 'up'
-      action: keep
-
-    - source_labels: [__name__]
-      regex: 'node_network_receive_bytes'
-      action: keep
+      regex: '(node_filesystem_size|node_filesystem_free|node_filesystem_sizenode_network_transmit_bytes|node_network_receive_bytes)'
   ```
