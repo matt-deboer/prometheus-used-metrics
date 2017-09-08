@@ -144,4 +144,5 @@ Output looks like:
 
     - source_labels: [__name__]
       regex: '(node_filesystem_size|node_filesystem_free|node_filesystem_sizenode_network_transmit_bytes|node_network_receive_bytes)'
+      action: keep
   ```
